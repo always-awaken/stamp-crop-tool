@@ -1,0 +1,7 @@
+name: sct-py34
+dependencies:
+  - python=3.4   # or 2.7
+  - pyqt=4.*
+  - natsort=5.0.*
+  - numpy=1.11.*
+  - opencv=3.2.*
