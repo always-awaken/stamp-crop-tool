@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 import cv2  # Tested with opencv version 3.2.0
 import os.path
 import numpy as np
 import argparse
-from natsort import natsorted
 import sys
-from PyQt4 import QtCore, QtGui, uic
-from PyQt4.QtGui import *
 
+from natsort import natsorted
+from PyQt5 import QtCore, uic, QtGui
+from PyQt5.QtWidgets import *
 qtCreatorFile = "StampCropTool_qt4.ui"
 
 # Control flags
@@ -15,13 +16,13 @@ DEBUG = True
 # Constants
 APP_NAME = 'StampCropTool'
 
-Ui_MainWindow, QtBaseClass = uic.loadUiType(qtCreatorFile)
+Ui_MainWindow = uic.loadUiType(qtCreatorFile)[0]
 
 
-class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
+class StampCropTool(QMainWindow, Ui_MainWindow):
 
     def __init__(self, debug=None):
-        QtGui.QMainWindow.__init__(self)
+        QMainWindow.__init__(self)
         Ui_MainWindow.__init__(self)
         self.setupUi(self)
         self.setWindowIcon(QtGui.QIcon('static/icon.png'))
@@ -91,7 +92,7 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
         self.count = self.count + 1
         
         image_path = os.path.join(self.outputPath.toPlainText(), "")
-        print(image_path)
+        #print(image_path)
         self.__create_dir_if_not_exists(image_path)
         intStampWidth = int(self.stampWidthBox.text())
         intStampHeight = int(self.stampHeightBox.text())
@@ -102,7 +103,7 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
         #cv2.cvtColor(crop_img, cv2.COLOR_RGB2BGR)
         
         cv2.imwrite(os.path.join(image_path, self.outputPrefixTextBox.text()+str(self.count)+".jpg"), crop_img)
-        self._log('save')
+        self._log('image Save : ' + os.path.join(image_path, self.outputPrefixTextBox.text()+str(self.count)+".jpg"))
 
     def __handle_click(self, event):
         x = event.pos().x()
@@ -127,9 +128,9 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
         if self.debug == True:
             print("update_canvas: height=%d,width=%d" % (height, width))
         bytesPerLine = 3 * width
-        qImg = QImage(img, width, height,
-                      bytesPerLine, QImage.Format_RGB888)
-        pixmap = QPixmap(qImg)
+        qImg = QtGui.QImage(img, width, height,
+                      bytesPerLine, QtGui.QImage.Format_RGB888)
+        pixmap = QtGui.QPixmap(qImg)
         self.img_view.setPixmap(pixmap)
         self.img_view.show()
 
@@ -140,9 +141,10 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
                    for f in files if f.endswith("jpg") or f.endswith("png")]
         #for Windows
         imgList = [img.replace('\\', '/') for img in imgList]
-        self.outputPath.setText(img_path + '/output')
         
+        self.outputPath.setText(img_path + '/output')
         self.imgList = natsorted(imgList)
+        #print(type(self.imgList))
         self.currentImageIndex = self.imgList.index(self.currentImage)
         
 
@@ -152,8 +154,7 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
         self.load_opencv_to_canvas()
 
     def get_input_file(self):
-        self.currentImage = QFileDialog.getOpenFileName(self, 'Open file',
-                                                        'c:\\', "Image files (*.jpg *.png)")
+        self.currentImage = QFileDialog.getOpenFileName(self, 'Open file','c:\\', "Image files (*.jpg *.png)")[0]
         self.load_new_image()
         self.read_filelist()
 
@@ -192,7 +193,7 @@ if __name__ == "__main__":
                         action="store_true")
     args = parser.parse_args()
 
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     window = StampCropTool(args.debug)
     window.show()
     sys.exit(app.exec_())

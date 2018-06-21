@@ -1,8 +1,9 @@
-name: sct-py34
+name: sct-py36
 dependencies:
-  - python=3.4   # or 2.7
-  - pyqt=4.*
-  - natsort=5.0.*
+  - python=3.6   # or 2.7
+  - pyqt=5.*
   - numpy=1.11.*
   - pip:
     - opencv-python==3.2.0.8
+    - natsort==5.3.2
+    - msgpack==0.5.6
