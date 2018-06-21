@@ -39,8 +39,8 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
         self.img_view.mouseMoveEvent = self.__handle_move
 		
 		#set stampWidthBox and stampHeightBox
-        self.stampWidth = int(int(self.stampWidthBox.text())/2)
-        self.stampHeight = int(int(self.stampHeightBox.text())/2)
+        self.stampHalfWidth = int(int(self.stampWidthBox.text())/2)
+        self.stampHalfHeight = int(int(self.stampHeightBox.text())/2)
 		
 		# Connect handlers to signals from QLineEdit(s)
         self.stampWidthBox.textChanged.connect(self.__handle_stamp_width_box)
@@ -70,9 +70,9 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
     def _log(self, text):
         self.logView.append(text)
     def __handle_stamp_width_box(self, event):
-        self.stampWidth = int(self.stampWidthBox.text())
+        self.stampHalfWidth = int(int(self.stampWidthBox.text())/2)
     def __handle_stamp_height_box(self, event):
-        self.stampHeight = int(self.stampHeightBox.text())
+        self.stampHalfHeight = int(int(self.stampHeightBox.text())/2)
     def __handle_previous_btn(self, event):
 
         if self.currentImageIndex > 0:
@@ -94,7 +94,7 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
         print(image_path)
         self.__create_dir_if_not_exists(image_path)
         intStampWidth = int(self.stampWidthBox.text())
-        intStampHeight = int(self.stampWidthBox.text())
+        intStampHeight = int(self.stampHeightBox.text())
         
         crop_img = self.original_img[y_pos:y_pos+intStampHeight, x_pos:x_pos+intStampWidth]
         if x_pos < 0 or y_pos < 0 or x_pos > self.original_img.shape[1] or y_pos > self.original_img.shape[0]:
@@ -107,10 +107,10 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
     def __handle_click(self, event):
         x = event.pos().x()
         y = event.pos().y()
-        cv2.rectangle(self.cv_img, (x - self.stampWidth, y - self.stampHeight),(x + self.stampWidth, y + self.stampHeight), (0, 255, 0), 3)
+        cv2.rectangle(self.cv_img, (x - self.stampHalfWidth, y - self.stampHalfHeight),(x + self.stampHalfWidth, y + self.stampHalfHeight), (0, 255, 0), 3)
         height, width, __ = self.cv_img.shape
         self.update_canvas(self.cv_img, height, width)
-        self.__saveStampImage(x-self.stampWidth ,y-self.stampHeight)
+        self.__saveStampImage(x-self.stampHalfWidth ,y-self.stampHalfHeight)
         if self.settingNextAfterOneclickBox.isChecked():
             self.__handle_next_btn(event)
     def __handle_move(self, event):
@@ -120,7 +120,7 @@ class StampCropTool(QtGui.QMainWindow, Ui_MainWindow):
         if self.eps >= 5 and hasattr(self, 'cv_img'):
             self.eps=0
             cv_buffer_img = self.cv_img.copy()
-            cv2.rectangle(cv_buffer_img, (x - self.stampWidth, y - self.stampHeight),(x + self.stampWidth, y + self.stampHeight), (255, 0, 0), 3)
+            cv2.rectangle(cv_buffer_img, (x - self.stampHalfWidth, y - self.stampHalfHeight),(x + self.stampHalfWidth, y + self.stampHalfHeight), (255, 0, 0), 3)
             height, width, __ = cv_buffer_img.shape
             self.update_canvas(cv_buffer_img, height, width)
     def update_canvas(self, img, height, width):
