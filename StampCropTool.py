@@ -8,7 +8,7 @@ import sys
 from natsort import natsorted
 from PyQt5 import QtCore, uic, QtGui
 from PyQt5.QtWidgets import *
-qtCreatorFile = "StampCropTool_qt4.ui"
+qtCreatorFile = "StampCropTool_qt5.ui"
 
 # Control flags
 DEBUG = True
@@ -72,6 +72,13 @@ class StampCropTool(QMainWindow, Ui_MainWindow):
         self.logView.append(text)
     def __handle_stamp_width_box(self, event):
         self.stampHalfWidth = int(int(self.stampWidthBox.text())/2)
+		
+    def resizeEvent(self, event):
+        if hasattr(self, 'cv_img'):
+         self._log('image Load : %s' % self.currentImage)
+         self.load_opencv_to_canvas()
+        QMainWindow.resizeEvent(self, event)
+
     def __handle_stamp_height_box(self, event):
         self.stampHalfHeight = int(int(self.stampHeightBox.text())/2)
     def __handle_previous_btn(self, event):
@@ -132,6 +139,7 @@ class StampCropTool(QMainWindow, Ui_MainWindow):
                       bytesPerLine, QtGui.QImage.Format_RGB888)
         pixmap = QtGui.QPixmap(qImg)
         self.img_view.setPixmap(pixmap)
+        
         self.img_view.show()
 
     def read_filelist(self):
@@ -144,7 +152,6 @@ class StampCropTool(QMainWindow, Ui_MainWindow):
         
         self.outputPath.setText(img_path + '/output')
         self.imgList = natsorted(imgList)
-        #print(type(self.imgList))
         self.currentImageIndex = self.imgList.index(self.currentImage)
         
 
@@ -183,6 +190,7 @@ class StampCropTool(QMainWindow, Ui_MainWindow):
         height, width, __ = self.cv_img.shape
         self.has_original_been_created = False
         self.segmentation_mask = np.zeros((height, width))
+        
         self.update_canvas(self.cv_img, height, width)
 
 
