@@ -132,7 +132,7 @@ p, li { white-space: pre-wrap; }
          <x>30</x>
          <y>370</y>
          <width>341</width>
-         <height>171</height>
+         <height>201</height>
         </rect>
        </property>
        <property name="title">
@@ -143,15 +143,15 @@ p, li { white-space: pre-wrap; }
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>291</width>
-          <height>141</height>
+          <width>311</width>
+          <height>191</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
           <widget class="QLabel" name="label">
            <property name="text">
-            <string>Setting</string>
+            <string>Setting(Press your arrow key 'w','a','s','d')</string>
            </property>
           </widget>
          </item>
@@ -200,6 +200,33 @@ p, li { white-space: pre-wrap; }
           </layout>
          </item>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <property name="leftMargin">
+            <number>20</number>
+           </property>
+           <property name="rightMargin">
+            <number>20</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_8">
+             <property name="text">
+              <string>arrowKeyIncreaseValue</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="arrowIncreaseBox">
+             <property name="text">
+              <string>10</string>
+             </property>
+             <property name="placeholderText">
+              <string extracomment="Width"/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="leftMargin">
             <number>20</number>
@@ -222,6 +249,33 @@ p, li { white-space: pre-wrap; }
             </widget>
            </item>
           </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_7">
+           <property name="leftMargin">
+            <number>20</number>
+           </property>
+           <property name="rightMargin">
+            <number>20</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="label_9">
+             <property name="text">
+              <string>count</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="countBox"/>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="settingSaveInfoForObjectDetect">
+           <property name="text">
+            <string>Save image and info for object detect</string>
+           </property>
+          </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="settingNextAfterOneclickBox">
@@ -263,7 +317,7 @@ p, li { white-space: pre-wrap; }
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>560</y>
+         <y>580</y>
          <width>341</width>
          <height>211</height>
         </rect>
@@ -297,8 +351,8 @@ p, li { white-space: pre-wrap; }
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>849</width>
-         <height>829</height>
+         <width>854</width>
+         <height>838</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">

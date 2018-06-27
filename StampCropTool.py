@@ -43,10 +43,14 @@ class StampCropTool(QMainWindow, Ui_MainWindow):
         self.stampHalfWidth = int(int(self.stampWidthBox.text())/2)
         self.stampHalfHeight = int(int(self.stampHeightBox.text())/2)
 		
+		#make Image set
+		
+		
 		# Connect handlers to signals from QLineEdit(s)
         self.stampWidthBox.textChanged.connect(self.__handle_stamp_width_box)
         self.stampHeightBox.textChanged.connect(self.__handle_stamp_height_box)
-        
+        # Connect handlers to signals from QSpinBox(s)
+        self.countBox.valueChanged.connect(self.__handle_countBox)
 		
 		# Connect handlers to signals from QPushButton(s)
         self.inFile.clicked.connect(self.get_input_file)
@@ -67,20 +71,57 @@ class StampCropTool(QMainWindow, Ui_MainWindow):
         else:
             self._log('No more images in directory! Currently at image %d of %d' % (
                     self.currentImageIndex + 1, len(self.imgList)))
+    def keyPressEvent(self, e):
+	     
+        if e.key() == 0x57:#W
+            tempHeight = int(self.stampHeightBox.text())+int(self.arrowIncreaseBox.text())
+            if tempHeight < 0:
+                return
+            self.stampHeightBox.setText(str(tempHeight))
+            self.stampHalfHeight = int(int(self.stampHeightBox.text())/2)
+        if e.key() == 0x53:#S
+            tempHeight = int(self.stampHeightBox.text())-int(self.arrowIncreaseBox.text())
+            if tempHeight < 0:
+               return
+            self.stampHeightBox.setText(str(tempHeight))
+            self.stampHalfHeight = int(int(self.stampHeightBox.text())/2)
+        if e.key() == 0x41:#A
+            tempWidth = int(self.stampWidthBox.text())-int(self.arrowIncreaseBox.text())
+            if tempWidth < 0:
+                return
+            self.stampWidthBox.setText(str(tempWidth))
+            self.stampHalfWidth = int(int(self.stampWidthBox.text())/2)
+        if e.key() == 0x44:#D
+            tempWidth = int(self.stampWidthBox.text())+int(self.arrowIncreaseBox.text())
+            if tempWidth < 0:
+                return
+            self.stampWidthBox.setText(str(tempWidth))
+            self.stampHalfWidth = int(int(self.stampWidthBox.text())/2)
+			
 			
     def _log(self, text):
         self.logView.append(text)
     def __handle_stamp_width_box(self, event):
         self.stampHalfWidth = int(int(self.stampWidthBox.text())/2)
 		
+    
+		
     def resizeEvent(self, event):
         if hasattr(self, 'cv_img'):
          self._log('image Load : %s' % self.currentImage)
          self.load_opencv_to_canvas()
         QMainWindow.resizeEvent(self, event)
-
+    def saveInfoForTFRecord(self, width,height,xmins,xmaxs,ymins,ymaxs):
+        image_path = os.path.join(self.outputPath.toPlainText(), "")
+        f = open(os.path.join(image_path, self.outputPrefixTextBox.text()+str(self.count)+".txt"), 'w')
+        #width:height:xmins:xmaxs:ymins:ymaxs
+        img_path, img_name = os.path.split(self.currentImage)
+        f.write("%s:%d:%d:%d:%d:%d:%d" % (img_name,width,height,xmins,xmaxs,ymins,ymaxs))
+        f.close()
     def __handle_stamp_height_box(self, event):
         self.stampHalfHeight = int(int(self.stampHeightBox.text())/2)
+    def __handle_countBox(self, event):
+        self.count = int(self.countBox.value()) - 1
     def __handle_previous_btn(self, event):
 
         if self.currentImageIndex > 0:
@@ -97,7 +138,7 @@ class StampCropTool(QMainWindow, Ui_MainWindow):
 
     def __saveStampImage(self, x_pos, y_pos):
         self.count = self.count + 1
-        
+        self.countBox.setValue(int(self.count))
         image_path = os.path.join(self.outputPath.toPlainText(), "")
         #print(image_path)
         self.__create_dir_if_not_exists(image_path)
@@ -110,6 +151,10 @@ class StampCropTool(QMainWindow, Ui_MainWindow):
         #cv2.cvtColor(crop_img, cv2.COLOR_RGB2BGR)
         
         cv2.imwrite(os.path.join(image_path, self.outputPrefixTextBox.text()+str(self.count)+".jpg"), crop_img)
+		
+        if self.settingSaveInfoForObjectDetect.isChecked():
+            self.saveInfoForTFRecord(self.original_img.shape[1],self.original_img.shape[0],x_pos,x_pos+intStampWidth,y_pos,y_pos+intStampHeight)
+       
         self._log('image Save : ' + os.path.join(image_path, self.outputPrefixTextBox.text()+str(self.count)+".jpg"))
 
     def __handle_click(self, event):
